@@ -1,0 +1,77 @@
+<!-- pages/order/order.wxml -->
+<view class="container">
+  <!-- 标签栏 -->
+  <view class="tabs">
+    <scroll-view class="tabs-scroll" scroll-x="true">
+      <view class="tab-item {{activeTab === item.key ? 'active' : ''}}" wx:for="{{tabs}}" wx:key="key" data-tab="{{item.key}}" bindtap="switchTab">
+        {{item.name}}
+      </view>
+    </scroll-view>
+  </view>
+  <!-- 订单列表 -->
+  <view class="orders-list">
+    <view class="order-item" wx:for="{{orders}}" wx:key="id" data-order-no="{{item.orderNo}}" bindtap="viewOrderDetail">
+      <!-- 订单头部 -->
+      <view class="order-header">
+        <view class="order-info">
+          <text class="order-no">订单号：{{item.orderNo}}</text>
+          <text class="order-time">{{item.formattedCreatedAt}}</text>
+        </view>
+        <view class="order-status {{getStatusClass(item.status)}}">
+          {{getStatusText(item.status)}}
+        </view>
+      </view>
+      <!-- 订单商品 -->
+      <view class="order-dishes">
+        <view class="dish-item" wx:for="{{item.items}}" wx:key="id" wx:for-item="dish">
+          <image class="dish-image" src="{{dish.dishImage}}" mode="aspectFill"></image>
+          <view class="dish-info">
+            <view class="dish-name">{{dish.dishName}}</view>
+            <view class="dish-spec" wx:if="{{dish.specifications}}">{{dish.specifications}}</view>
+            <view class="dish-price-qty">
+              <text class="dish-price">{{dish.formattedDishPrice}}</text>
+              <text class="dish-qty">×{{dish.quantity}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- 订单信息 -->
+      <view class="order-summary">
+        <view class="summary-item">
+          <text class="label">桌台：</text>
+          <text class="value">{{item.tableName}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="label">总计：</text>
+          <text class="value price">{{item.formattedTotalAmount}}</text>
+        </view>
+      </view>
+      <!-- 订单操作 -->
+      <view class="order-actions" catchtap="stopPropagation">
+        <button class="action-btn secondary" wx:if="{{canCancelOrder(item.status)}}" data-order-id="{{item.id}}" bindtap="cancelOrder">
+          取消订单
+        </button>
+        <button class="action-btn secondary" data-order-id="{{item.id}}" bindtap="contactService">
+          联系客服
+        </button>
+        <button class="action-btn primary" wx:if="{{item.status === 'COMPLETED'}}" data-order-id="{{item.id}}" bindtap="buyAgain">
+          再次购买
+        </button>
+      </view>
+    </view>
+  </view>
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading && !refreshing}}">
+    <text>加载中...</text>
+  </view>
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && orders.length === 0}}">
+    <image class="empty-icon" src="/images/empty-order.png"></image>
+    <text class="empty-text">暂无订单</text>
+    <button class="empty-btn" bindtap="goToMenu">去点餐</button>
+  </view>
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{!hasMore && orders.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+</view>

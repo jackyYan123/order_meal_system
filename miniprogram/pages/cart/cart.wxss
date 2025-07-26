@@ -1,0 +1,368 @@
+/* pages/cart/cart.wxss */
+.container {
+  padding: 20rpx 0;
+  padding-bottom: 200rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 通用卡片样式 */
+.card {
+  background-color: white;
+  border-radius: 16rpx;
+  margin: 0 10rpx 20rpx 10rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 桌台信息 */
+.table-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 24rpx;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+}
+
+.table-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.table-details {
+  flex: 1;
+}
+
+.table-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.table-tip {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.change-table-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+  border-radius: 30rpx;
+}
+
+/* 未选择桌台提示 */
+.no-table-tip {
+  background-color: #fff3cd;
+  border: 1rpx solid #ffeaa7;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  text-align: center;
+  margin: 0 10rpx 20rpx 10rpx;
+}
+
+.tip-icon {
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
+}
+
+.tip-text {
+  font-size: 28rpx;
+  color: #856404;
+  margin-bottom: 20rpx;
+}
+
+.select-table-btn {
+  background-color: #ffc107;
+  color: #856404;
+  border: none;
+  padding: 16rpx 32rpx;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+}
+
+/* 购物车区域 */
+.cart-section {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 30rpx 24rpx;
+  margin: 0 10rpx 20rpx 10rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.clear-btn {
+  background: none;
+  border: 1rpx solid #ff6b35;
+  color: #ff6b35;
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+/* 购物车商品列表 */
+.cart-list {
+  margin-bottom: 30rpx;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.item-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  margin-right: 16rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12rpx;
+  line-height: 1.4;
+}
+
+.item-price {
+  color: #ff6b35;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.special-requests {
+  background-color: #f8f9fa;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.requests-label {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.requests-text {
+  font-size: 22rpx;
+  color: #333;
+}
+
+.add-requests-btn {
+  background: none;
+  border: 1rpx solid #ddd;
+  color: #666;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+}
+
+/* 数量控制 */
+.quantity-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80rpx;
+  margin-right: 0;
+}
+
+.quantity-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border: 2rpx solid #ff6b35;
+  background-color: white;
+  color: #ff6b35;
+  border-radius: 50%;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6rpx 0;
+}
+
+.quantity-btn.plus-btn {
+  background-color: #ff6b35;
+  color: white;
+}
+
+.quantity-text {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin: 8rpx 0;
+  min-width: 40rpx;
+  text-align: center;
+}
+
+.item-subtotal {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #ff6b35;
+  text-align: center;
+  min-width: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 订单备注 */
+.remarks-section {
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 30rpx;
+  min-height: 200rpx;
+  transition: all 0.3s ease-in-out;
+}
+
+.remarks-label {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.remarks-input {
+  width: 100%;
+  min-height: 120rpx;
+  max-height: 200rpx;
+  padding: 20rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease-in-out;
+  resize: none;
+}
+
+.remarks-input.focused {
+  border-color: #ff6b35;
+  background-color: white;
+  box-shadow: 0 0 0 2rpx rgba(255, 107, 53, 0.1);
+}
+
+/* 空购物车 */
+.empty-cart {
+  text-align: center;
+  padding: 120rpx 60rpx;
+  background-color: white;
+  border-radius: 16rpx;
+  margin: 0 20rpx 20rpx 20rpx;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.empty-tip {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.continue-shopping-btn {
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  padding: 20rpx 60rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+}
+
+/* 底部结算栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 20rpx 44rpx;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.total-info {
+  flex: 1;
+}
+
+.total-count {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.total-price {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 8rpx;
+}
+
+.price-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.submit-btn {
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  padding: 20rpx 40rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  min-width: 200rpx;
+}
+
+.submit-btn.disabled {
+  background-color: #ccc;
+  color: #999;
+}

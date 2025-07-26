@@ -1,0 +1,112 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 桌台信息 -->
+  <view class="table-info">
+    <view class="table-info-content">
+      <view class="table-icon">🍽️</view>
+      <view class="table-details">
+        <view class="table-name">{{tableInfo.name}}</view>
+        <view class="table-tip" wx:if="{{!tableInfo.id}}">扫码选择您的桌台</view>
+      </view>
+    </view>
+    <button class="scan-btn btn btn-primary" bindtap="scanTable">
+      {{tableInfo.id ? '更换桌台' : '扫码选台'}}
+    </button>
+  </view>
+  <!-- 用户欢迎 -->
+  <view class="welcome-section" wx:if="{{userInfo}}">
+    <view class="welcome-text">
+      <text class="greeting">您好，{{userInfo.nickName || '顾客'}}！</text>
+      <text class="sub-greeting">欢迎来到智慧点餐</text>
+    </view>
+    <image class="user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+  </view>
+  <!-- 快速操作 -->
+  <view class="quick-actions card">
+    <view class="card-header">快速操作</view>
+    <view class="action-grid">
+      <view class="action-item" bindtap="goToMenu">
+        <view class="action-icon">📋</view>
+        <view class="action-text">浏览菜单</view>
+      </view>
+      <view class="action-item" bindtap="goToCart">
+        <view class="action-icon-wrapper">
+          <view class="action-icon">🛒</view>
+          <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+        </view>
+        <view class="action-text">购物车</view>
+      </view>
+      <view class="action-item" bindtap="goToOrder">
+        <view class="action-icon">📝</view>
+        <view class="action-text">我的订单</view>
+      </view>
+      <view class="action-item" bindtap="goToProfile">
+        <view class="action-icon">👤</view>
+        <view class="action-text">个人中心</view>
+      </view>
+    </view>
+  </view>
+  <!-- 菜品分类 -->
+  <view class="categories-section card" wx:if="{{categories.length > 0}}">
+    <view class="card-header">菜品分类</view>
+    <view class="categories-container">
+      <view class="category-item" wx:for="{{categories}}" wx:key="id" data-category-id="{{item.id}}" bindtap="goToCategoryMenu">
+        <image class="category-image" src="{{item.cover}}" mode="aspectFill"></image>
+        <view class="category-name">{{item.name}}</view>
+      </view>
+    </view>
+  </view>
+  <!-- 推荐菜品 -->
+  <view class="dishes-section card" wx:if="{{recommendedDishes.length > 0}}">
+    <view class="card-header">
+      <text>今日推荐</text>
+      <text class="more-link" bindtap="goToMenu">查看更多 ></text>
+    </view>
+    <view class="dishes-grid">
+      <view class="dish-item" wx:for="{{recommendedDishes}}" wx:key="id" data-dish="{{item}}" data-dish-id="{{item.id}}">
+        <image class="dish-image" src="{{item.imageUrl}}" mode="aspectFill" bindtap="viewDishDetail"></image>
+        <view class="dish-info">
+          <view class="dish-name" bindtap="viewDishDetail">{{item.name}}</view>
+          <view class="dish-desc">{{item.description}}</view>
+          <view class="dish-footer">
+            <view class="dish-price price price-medium">{{item.formattedPrice}}</view>
+            <button class="add-btn btn btn-primary" size="mini" data-dish="{{item}}" bindtap="addToCart">
+              +
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 热门菜品 -->
+  <view class="dishes-section card" wx:if="{{popularDishes.length > 0}}">
+    <view class="card-header">
+      <text>热门菜品</text>
+      <text class="more-link" bindtap="goToMenu">查看更多 ></text>
+    </view>
+    <view class="dishes-list">
+      <view class="dish-item-horizontal" wx:for="{{popularDishes}}" wx:key="id" data-dish="{{item}}" data-dish-id="{{item.id}}">
+        <image class="dish-image-small" src="{{item.imageUrl}}" mode="aspectFill" bindtap="viewDishDetail"></image>
+        <view class="dish-info-horizontal">
+          <view class="dish-name" bindtap="viewDishDetail">{{item.name}}</view>
+          <view class="dish-desc">{{item.description}}</view>
+          <view class="dish-footer">
+            <view class="dish-price price price-medium">{{item.formattedPrice}}</view>
+            <button class="add-btn btn btn-primary" size="mini" data-dish="{{item}}" bindtap="addToCart">
+              +
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && categories.length === 0}}">
+    <image class="empty-icon" src="/images/empty.png"></image>
+    <text>暂无数据</text>
+  </view>
+</view>

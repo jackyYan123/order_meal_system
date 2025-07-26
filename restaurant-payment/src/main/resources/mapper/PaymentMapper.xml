@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.payment.mapper.PaymentMapper">
+
+    <!-- 根据订单ID查询支付记录 -->
+    <select id="selectByOrderId" resultType="com.restaurant.payment.entity.Payment">
+        SELECT * FROM payments 
+        WHERE order_id = #{orderId} 
+        AND deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据支付流水号查询支付记录 -->
+    <select id="selectByPaymentNo" resultType="com.restaurant.payment.entity.Payment">
+        SELECT * FROM payments 
+        WHERE payment_no = #{paymentNo} 
+        AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定时间范围内的支付统计 -->
+    <select id="selectPaymentStatistics" resultType="com.restaurant.payment.entity.Payment">
+        SELECT * FROM payments 
+        WHERE deleted = 0
+        <if test="startTime != null">
+            AND created_at >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND created_at &lt;= #{endTime}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,117 @@
+<!--pages/payment/payment.wxml-->
+<view class="container">
+  <view wx:if="{{!loading && order}}">
+    <!-- 订单信息 -->
+    <view class="order-section card">
+      <view class="order-header">
+        <view class="order-title">订单信息</view>
+        <button class="detail-btn" bindtap="viewOrderDetail">查看详情</button>
+      </view>
+      
+      <view class="order-info">
+        <view class="info-item">
+          <text class="label">订单号</text>
+          <text class="value">{{order.orderNo}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">桌台</text>
+          <text class="value">{{order.tableName}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">商品数量</text>
+          <text class="value">{{order.items.length}}种商品</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 支付金额 -->
+    <view class="amount-section card">
+      <view class="amount-header">
+        <text class="amount-label">支付金额</text>
+        <text class="amount-value">{{order.formattedTotalAmount}}</text>
+      </view>
+      
+      <view class="amount-detail">
+        <view class="detail-item">
+          <text class="label">商品总计</text>
+          <text class="value">{{order.formattedDishAmount}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{order.serviceAmount > 0}}">
+          <text class="label">服务费</text>
+          <text class="value">{{order.formattedServiceAmount}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{order.discountAmount > 0}}">
+          <text class="label">优惠金额</text>
+          <text class="value discount">-{{order.formattedDiscountAmount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 支付方式 -->
+    <view class="payment-methods card">
+      <view class="card-header">选择支付方式</view>
+      
+      <view class="method-list">
+        <view class="method-item {{selectedPaymentMethod === item.id ? 'selected' : ''}}"
+              wx:for="{{paymentMethods}}"
+              wx:key="id"
+              data-method="{{item.id}}"
+              bindtap="selectPaymentMethod">
+          
+          <view class="method-info">
+            <text class="method-icon">{{item.icon}}</text>
+            <view class="method-details">
+              <view class="method-name">{{item.name}}</view>
+              <view class="method-desc">{{item.desc}}</view>
+            </view>
+          </view>
+          
+          <view class="method-radio">
+            <view class="radio-inner" wx:if="{{selectedPaymentMethod === item.id}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 安全提示 -->
+    <view class="security-tips card">
+      <view class="tips-header">
+        <text class="security-icon">🔒</text>
+        <text class="tips-title">安全支付</text>
+      </view>
+      <view class="tips-content">
+        <text>• 支付过程采用银行级加密技术</text>
+        <text>• 您的支付信息将得到严格保护</text>
+        <text>• 支持7×24小时客服服务</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支付按钮 -->
+  <view class="payment-footer" wx:if="{{!loading && order}}">
+    <view class="footer-amount">
+      <text class="footer-label">实付金额</text>
+      <text class="footer-price">{{order.formattedTotalAmount}}</text>
+    </view>
+    <button class="pay-btn" 
+            bindtap="confirmPayment"
+            disabled="{{paying}}">
+      {{paying ? '支付中...' : '确认支付'}}
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 支付遮罩 -->
+  <view class="payment-mask" wx:if="{{paying}}">
+    <view class="payment-content">
+      <view class="payment-spinner"></view>
+      <text class="payment-text">支付中，请稍候...</text>
+      <text class="payment-tip">请在微信中完成支付</text>
+    </view>
+  </view>
+</view>

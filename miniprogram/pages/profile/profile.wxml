@@ -1,0 +1,78 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息区域 -->
+  <view class="user-section">
+    <view wx:if="{{isLogin}}" class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <view class="nickname">{{userInfo.nickName}}</view>
+        <view class="user-type">{{userInfo.nickName === '游客' ? '游客用户' : '微信用户'}}</view>
+      </view>
+      <button class="edit-btn" bindtap="editProfile">编辑</button>
+    </view>
+    
+    <view wx:else class="login-prompt">
+      <image class="default-avatar" src="/images/default-avatar.png"></image>
+      <view class="prompt-text">
+        <view class="prompt-title">未登录</view>
+        <view class="prompt-desc">登录后享受更多服务</view>
+      </view>
+      <button class="login-btn" bindtap="login">立即登录</button>
+    </view>
+  </view>
+
+  <!-- 快捷统计 -->
+  <view class="stats-section" wx:if="{{isLogin}}">
+    <navigator url="/pages/order/order?tab=all" class="stat-item">
+      <view class="stat-number">--</view>
+      <view class="stat-label">全部订单</view>
+    </navigator>
+    <navigator url="/pages/order/order?tab=pending" class="stat-item">
+      <view class="stat-number">--</view>
+      <view class="stat-label">待确认</view>
+    </navigator>
+    <navigator url="/pages/order/order?tab=confirmed" class="stat-item">
+      <view class="stat-number">--</view>
+      <view class="stat-label">制作中</view>
+    </navigator>
+    <navigator url="/pages/order/order?tab=completed" class="stat-item">
+      <view class="stat-number">--</view>
+      <view class="stat-label">已完成</view>
+    </navigator>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" 
+          wx:for="{{menuItems}}" 
+          wx:key="title"
+          data-item="{{item}}"
+          bindtap="onMenuItemTap">
+      <view class="menu-icon">{{item.icon}}</view>
+      <view class="menu-content">
+        <view class="menu-title">{{item.title}}</view>
+        <view class="menu-desc">{{item.desc}}</view>
+      </view>
+      <view class="arrow-icon">›</view>
+    </view>
+  </view>
+
+  <!-- 其他操作 -->
+  <view class="other-section">
+    <button class="other-btn" bindtap="openSettings">
+      <view class="btn-icon">⚙️</view>
+      <text>设置</text>
+      <view class="arrow-icon">›</view>
+    </button>
+    
+    <button class="other-btn logout-btn" wx:if="{{isLogin}}" bindtap="logout">
+      <view class="btn-icon">🚪</view>
+      <text>退出登录</text>
+    </button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text>智慧点餐 v1.0.0</text>
+  </view>
+</view>

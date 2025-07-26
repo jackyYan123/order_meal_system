@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restaurant.order.mapper.OrderMapper">
+
+    <!-- 分页查询订单（带关联信息） -->
+    <select id="selectOrdersWithDetails" resultType="com.restaurant.order.entity.Order">
+        SELECT 
+            o.*,
+            t.table_number,
+            c.name as customer_name
+        FROM orders o
+        LEFT JOIN tables t ON o.table_id = t.id
+        LEFT JOIN customers c ON o.customer_id = c.id
+        WHERE o.deleted = 0
+        <if test="status != null and status != ''">
+            AND o.status = #{status}
+        </if>
+        <if test="tableId != null">
+            AND o.table_id = #{tableId}
+        </if>
+        <if test="startTime != null">
+            AND o.created_at >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND o.created_at &lt;= #{endTime}
+        </if>
+        ORDER BY o.created_at DESC
+    </select>
+
+    <!-- 根据桌台ID查询进行中的订单 -->
+    <select id="selectActiveOrdersByTableId" resultType="com.restaurant.order.entity.Order">
+        SELECT * FROM orders 
+        WHERE table_id = #{tableId} 
+        AND status IN ('PENDING', 'CONFIRMED', 'PREPARING', 'READY')
+        AND deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询需要提醒的订单（超过预计完成时间） -->
+    <select id="selectOverdueOrders" resultType="com.restaurant.order.entity.Order">
+        SELECT * FROM orders 
+        WHERE status IN ('CONFIRMED', 'PREPARING') 
+        AND estimated_time &lt; NOW()
+        AND deleted = 0
+        ORDER BY estimated_time ASC
+    </select>
+
+    <!-- 统计订单数据 -->
+    <select id="countOrdersByStatus" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM orders 
+        WHERE deleted = 0
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="startTime != null">
+            AND created_at >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND created_at &lt;= #{endTime}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,69 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <view class="login-content">
+    <!-- Logo区域 -->
+    <view class="logo-section">
+      <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+      <view class="app-name">智慧点餐</view>
+      <view class="app-desc">扫码点餐，智能服务</view>
+    </view>
+
+    <!-- 登录区域 -->
+    <view class="login-section">
+      <view class="login-title">欢迎使用</view>
+      
+      <!-- 微信登录 -->
+      <button class="login-btn primary-btn" 
+              wx:if="{{canIUseGetUserProfile}}"
+              bindtap="getUserProfile"
+              disabled="{{loading}}">
+        <image class="btn-icon" src="/images/wechat-icon.png"></image>
+        <text>{{loading ? '登录中...' : '微信快速登录'}}</text>
+      </button>
+
+      <!-- 游客登录 -->
+      <button class="login-btn guest-btn" 
+              bindtap="guestLogin"
+              disabled="{{loading}}">
+        <image class="btn-icon" src="/images/guest-icon.png"></image>
+        <text>游客模式</text>
+      </button>
+
+      <!-- 用户协议 -->
+      <view class="agreement">
+        <text>登录即表示同意</text>
+        <text class="link" bindtap="viewUserAgreement">《用户协议》</text>
+        <text>和</text>
+        <text class="link" bindtap="viewPrivacyPolicy">《隐私政策》</text>
+      </view>
+    </view>
+
+    <!-- 功能介绍 -->
+    <view class="features">
+      <view class="feature-item">
+        <view class="feature-icon">📱</view>
+        <view class="feature-text">扫码点餐</view>
+      </view>
+      <view class="feature-item">
+        <view class="feature-icon">🍽️</view>
+        <view class="feature-text">在线下单</view>
+      </view>
+      <view class="feature-item">
+        <view class="feature-icon">💳</view>
+        <view class="feature-text">便捷支付</view>
+      </view>
+      <view class="feature-item">
+        <view class="feature-icon">📋</view>
+        <view class="feature-text">订单跟踪</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载遮罩 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text>登录中...</text>
+    </view>
+  </view>
+</view>

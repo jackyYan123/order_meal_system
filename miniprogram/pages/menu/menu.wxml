@@ -1,0 +1,70 @@
+<!-- pages/menu/menu.wxml -->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar" wx:if="{{showSearch}}">
+    <input class="search-input" placeholder="搜索菜品..." value="{{searchKeyword}}" bindinput="onSearchInput" focus="{{showSearch}}" />
+    <button class="search-cancel" bindtap="toggleSearch">取消</button>
+  </view>
+  <!-- 分类导航 -->
+  <view class="category-nav" wx:if="{{!showSearch}}">
+    <scroll-view class="category-scroll" scroll-x="true">
+      <view class="category-item {{currentCategoryId === null ? 'active' : ''}}" data-category-id="{{null}}" bindtap="switchCategory">
+        全部
+      </view>
+      <view class="category-item {{currentCategoryId === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" data-category-id="{{item.id}}" bindtap="switchCategory">
+        {{item.name}}
+      </view>
+    </scroll-view>
+    <button class="search-btn" bindtap="toggleSearch">🔍</button>
+  </view>
+  <!-- 菜品列表 -->
+  <view class="dishes-container">
+    <view class="dish-item" wx:for="{{dishes}}" wx:key="id" data-dish="{{item}}" data-dish-id="{{item.id}}">
+      <!-- 菜品图片 -->
+      <image class="dish-image" src="{{item.image || item.imageUrl || '/images/default-dish.png'}}" mode="aspectFill" bindtap="viewDishDetail" binderror="onImageError"></image>
+      <!-- 菜品信息 -->
+      <view class="dish-info">
+        <view class="dish-header">
+          <view class="dish-name" bindtap="viewDishDetail">{{item.name}}</view>
+          <view class="dish-tags" wx:if="{{item.tags}}">
+            <text class="tag tag-info" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <view class="dish-desc">{{item.description}}</view>
+        <view class="dish-footer">
+          <view class="price-section">
+            <text class="dish-price price price-large">{{item.formattedPrice}}</text>
+            <text class="dish-stock" wx:if="{{item.stock <= 10 && item.stock > 0}}">
+              仅剩{{item.stock}}份
+            </text>
+            <text class="dish-stock sold-out" wx:if="{{item.stock <= 0}}">已售罄</text>
+          </view>
+          <!-- 购物车操作 -->
+          <view class="cart-controls" wx:if="{{item.stock > 0}}">
+            <button class="cart-btn minus-btn" wx:if="{{item.cartQuantity > 0}}" data-dish="{{item}}" bindtap="removeFromCart">
+              -
+            </button>
+            <text class="quantity" wx:if="{{item.cartQuantity > 0}}">
+              {{item.cartQuantity}}
+            </text>
+            <button class="cart-btn plus-btn" data-dish="{{item}}" bindtap="addToCart">+</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && dishes.length === 0}}">
+    <image class="empty-icon" src="/images/empty-dish.png"></image>
+    <text>{{searchKeyword ? '没有找到相关菜品' : '暂无菜品'}}</text>
+  </view>
+  <!-- 购物车悬浮按钮 -->
+  <view class="cart-float" wx:if="{{cartCount > 0}}" bindtap="goToCart">
+    <view class="cart-icon">🛒</view>
+    <view class="cart-badge">{{cartCount}}</view>
+  </view>
+</view>

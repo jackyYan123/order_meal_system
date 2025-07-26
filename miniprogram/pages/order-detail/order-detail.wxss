@@ -1,0 +1,291 @@
+/* pages/order-detail/order-detail.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 通用卡片样式 */
+.status-card,
+.info-card,
+.items-card,
+.cost-card,
+.total-card {
+  background-color: white;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 订单状态卡片 */
+.status-card {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 30rpx;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+}
+
+.status-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+  color: white;
+}
+
+.status-tip {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+/* 信息卡片 */
+.info-card,
+.items-card,
+.cost-card {
+  padding: 30rpx;
+}
+
+/* 订单总价卡片 */
+.total-card {
+  padding: 30rpx;
+}
+
+.total-card .total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.total-card .total-label {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.total-card .total-amount {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 160rpx;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+  word-break: break-all;
+}
+
+/* 商品列表 */
+.item-list {
+  margin-top: 20rpx;
+}
+
+.order-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.item-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
+}
+
+.item-price {
+  color: #ff6b35;
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.item-special {
+  font-size: 22rpx;
+  color: #666;
+  background-color: #f8f9fa;
+  padding: 6rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.item-quantity {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 20rpx;
+  text-align: center;
+  min-width: 60rpx;
+}
+
+.item-subtotal {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ff6b35;
+  text-align: right;
+  min-width: 120rpx;
+}
+
+/* 费用明细 */
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.cost-row:last-child {
+  margin-bottom: 0;
+}
+
+.cost-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.cost-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.total-row {
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+  margin-top: 16rpx;
+}
+
+.total-row .cost-label {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.total-amount {
+  font-size: 32rpx;
+  color: #ff6b35;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 40rpx;
+  padding: 0 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+}
+
+.action-btn.primary {
+  background-color: #ff6b35;
+  color: white;
+}
+
+.action-btn.secondary {
+  background-color: white;
+  color: #ff6b35;
+  border: 2rpx solid #ff6b35;
+}
+
+/* 订单不存在 */
+.no-order {
+  text-align: center;
+  padding: 120rpx 60rpx;
+  background-color: white;
+  border-radius: 16rpx;
+}
+
+.no-order-icon {
+  font-size: 80rpx;
+  margin-bottom: 30rpx;
+}
+
+.no-order-text {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 40rpx;
+}
+
+.back-btn {
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  padding: 20rpx 60rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+}
