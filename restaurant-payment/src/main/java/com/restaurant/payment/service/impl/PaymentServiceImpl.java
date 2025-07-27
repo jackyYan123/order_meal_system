@@ -1,6 +1,5 @@
 package com.restaurant.payment.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.restaurant.common.exception.BusinessException;
 import com.restaurant.common.exception.ErrorCode;
 import com.restaurant.payment.dto.CreatePaymentRequest;
