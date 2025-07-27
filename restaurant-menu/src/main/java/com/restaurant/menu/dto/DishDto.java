@@ -1,5 +1,7 @@
 package com.restaurant.menu.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,7 +20,11 @@ public class DishDto {
     private Integer stock;
     private Boolean isAvailable;
     private Integer sortOrder;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime updatedAt;
 
     public Long getId() {

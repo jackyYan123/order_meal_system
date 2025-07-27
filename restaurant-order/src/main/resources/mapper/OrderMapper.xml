@@ -60,4 +60,30 @@
         </if>
     </select>
 
+    <!-- 查询超时未支付的订单 -->
+    <select id="selectTimeoutUnpaidOrders" resultType="com.restaurant.order.entity.Order">
+        SELECT 
+            id,
+            order_number,
+            table_id,
+            customer_id,
+            status,
+            total_amount,
+            payment_status,
+            payment_method,
+            payment_time,
+            estimated_time,
+            completed_time,
+            remark,
+            cancel_reason,
+            created_at,
+            updated_at
+        FROM orders 
+        WHERE status = 'PENDING' 
+        AND payment_status = 'UNPAID' 
+        AND created_at &lt; #{timeoutTime}
+        AND deleted = 0
+        ORDER BY created_at ASC
+    </select>
+
 </mapper>

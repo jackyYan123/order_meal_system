@@ -1,7 +1,7 @@
 // pages/order/order.js
 const app = getApp()
 const { getOrderList, cancelOrder } = require('../../api/order')
-const { formatTime, formatPrice } = require('../../utils/util')
+// 移除时间格式化相关的导入
 
 Page({
   data: {
@@ -83,11 +83,12 @@ Page({
           console.log('第一个订单的totalAmount：', newOrders[0].totalAmount)
         }
         
-        // 格式化订单数据，包括价格格式化和时间格式化
+        // 格式化订单数据，只保留价格格式化，移除时间格式化
         const formattedOrders = newOrders.map(order => ({
           ...order,
           formattedTotalAmount: this.formatPrice(order.totalAmount),
-          formattedCreatedAt: formatTime(order.createdAt),
+          statusText: this.getStatusText(order.status),
+          statusClass: this.getStatusClass(order.status),
           items: order.items ? order.items.map(item => ({
             ...item,
             formattedDishPrice: this.formatPrice(item.dishPrice)
@@ -234,8 +235,7 @@ Page({
     })
   },
 
-  // 格式化时间
-  formatTime,
+
   
   // 格式化价格
   formatPrice(price) {

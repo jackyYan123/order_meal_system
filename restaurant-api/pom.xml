@@ -60,6 +60,18 @@
             <artifactId>restaurant-order</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!-- 添加对restaurant-payment模块的依赖 -->
+        <dependency>
+            <groupId>com.restaurant</groupId>
+            <artifactId>restaurant-payment</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- 添加对restaurant-notification模块的依赖 -->
+        <dependency>
+            <groupId>com.restaurant</groupId>
+            <artifactId>restaurant-notification</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

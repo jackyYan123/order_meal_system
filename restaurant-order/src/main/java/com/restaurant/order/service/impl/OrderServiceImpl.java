@@ -217,6 +217,103 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.countOrdersByStatus(status, startTime, endTime);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePaymentStatus(Long orderId, Boolean isPaid, Long paymentTime) {
+        log.info("更新订单支付状态，订单ID: {}, 支付状态: {}", orderId, isPaid);
+        
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "订单不存在");
+        }
+        
+        if (isPaid) {
+            order.setPaymentStatus(PaymentStatus.PAID.getCode());
+            if (paymentTime != null) {
+                order.setPaymentTime(LocalDateTime.ofEpochSecond(paymentTime / 1000, 0, java.time.ZoneOffset.ofHours(8)));
+            } else {
+                order.setPaymentTime(LocalDateTime.now());
+            }
+            
+            // 支付成功后，如果订单状态是待确认，自动确认订单
+            if (OrderStatus.PENDING.getCode().equals(order.getStatus())) {
+                order.setStatus(OrderStatus.CONFIRMED.getCode());
+                log.info("订单支付成功，自动确认订单，订单ID: {}", orderId);
+            }
+        } else {
+            order.setPaymentStatus(PaymentStatus.UNPAID.getCode());
+            order.setPaymentTime(null);
+        }
+        
+        orderMapper.updateById(order);
+        log.info("订单支付状态更新成功，订单ID: {}, 新状态: {}", orderId, order.getPaymentStatus());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void handlePaymentTimeout(Long orderId) {
+        log.info("处理订单支付超时，订单ID: {}", orderId);
+        
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            log.warn("订单不存在，订单ID: {}", orderId);
+            return;
+        }
+        
+        // 只有待确认且未支付的订单才处理超时
+        if (OrderStatus.PENDING.getCode().equals(order.getStatus()) && 
+            PaymentStatus.UNPAID.getCode().equals(order.getPaymentStatus())) {
+            
+            order.setStatus(OrderStatus.CANCELLED.getCode());
+            order.setCancelReason("支付超时自动取消");
+            
+            orderMapper.updateById(order);
+            
+            // 恢复库存
+            List<OrderItem> items = orderItemMapper.selectByOrderId(orderId);
+            for (OrderItem item : items) {
+                try {
+                    dishService.restoreStock(item.getDishId(), item.getQuantity());
+                } catch (Exception e) {
+                    log.error("恢复库存失败，菜品ID: {}, 数量: {}", item.getDishId(), item.getQuantity(), e);
+                }
+            }
+            
+            log.info("订单支付超时处理完成，订单已取消，订单ID: {}", orderId);
+        } else {
+            log.info("订单状态不符合超时取消条件，订单ID: {}, 状态: {}, 支付状态: {}", 
+                    orderId, order.getStatus(), order.getPaymentStatus());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void handleTimeoutOrders() {
+        log.debug("开始处理超时订单");
+        
+        // 查询30分钟前创建的待确认且未支付的订单
+        LocalDateTime timeoutTime = LocalDateTime.now().minusMinutes(30);
+        
+        List<Order> timeoutOrders = orderMapper.selectTimeoutUnpaidOrders(timeoutTime);
+        
+        if (timeoutOrders.isEmpty()) {
+            log.debug("没有发现超时订单");
+            return;
+        }
+        
+        log.info("发现 {} 个超时订单，开始处理", timeoutOrders.size());
+        
+        for (Order order : timeoutOrders) {
+            try {
+                handlePaymentTimeout(order.getId());
+            } catch (Exception e) {
+                log.error("处理超时订单失败，订单ID: {}", order.getId(), e);
+            }
+        }
+        
+        log.info("超时订单处理完成");
+    }
+
     /**
      * 生成订单号
      */

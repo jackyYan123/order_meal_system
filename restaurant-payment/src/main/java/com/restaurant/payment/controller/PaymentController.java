@@ -3,6 +3,7 @@ package com.restaurant.payment.controller;
 import com.restaurant.common.result.Result;
 import com.restaurant.payment.dto.CreatePaymentRequest;
 import com.restaurant.payment.dto.PaymentDto;
+import com.restaurant.payment.service.AlipayService;
 import com.restaurant.payment.service.PaymentService;
 import com.restaurant.payment.service.WechatPayService;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,11 @@ import java.util.Map;
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
-    
+
     private final PaymentService paymentService;
     private final WechatPayService wechatPayService;
-    
+    private final AlipayService alipayService;
+
     /**
      * 创建支付
      */
@@ -34,7 +36,7 @@ public class PaymentController {
         PaymentDto payment = paymentService.createPayment(request);
         return Result.success(payment);
     }
-    
+
     /**
      * 处理支付
      */
@@ -43,7 +45,7 @@ public class PaymentController {
         Map<String, Object> result = paymentService.processPayment(paymentId);
         return Result.success(result);
     }
-    
+
     /**
      * 查询支付详情
      */
@@ -52,7 +54,7 @@ public class PaymentController {
         PaymentDto payment = paymentService.getPaymentById(paymentId);
         return Result.success(payment);
     }
-    
+
     /**
      * 根据支付流水号查询支付详情
      */
@@ -61,16 +63,16 @@ public class PaymentController {
         PaymentDto payment = paymentService.getPaymentByPaymentNo(paymentNo);
         return Result.success(payment);
     }
-    
+
     /**
-     * 根据订单ID查询支付记录
+     * 根据订单号查询支付记录
      */
-    @GetMapping("/order/{orderId}")
-    public Result<List<PaymentDto>> getPaymentsByOrderId(@PathVariable Long orderId) {
-        List<PaymentDto> payments = paymentService.getPaymentsByOrderId(orderId);
+    @GetMapping("/order/{orderNo}")
+    public Result<List<PaymentDto>> getPaymentsByOrderId(@PathVariable String orderNo) {
+        List<PaymentDto> payments = paymentService.getPaymentsByOrderId(orderNo);
         return Result.success(payments);
     }
-    
+
     /**
      * 申请退款
      */
@@ -79,7 +81,7 @@ public class PaymentController {
         paymentService.refund(paymentId, reason);
         return Result.success();
     }
-    
+
     /**
      * 现金支付确认
      */
@@ -88,7 +90,7 @@ public class PaymentController {
         paymentService.confirmCashPayment(paymentId);
         return Result.success();
     }
-    
+
     /**
      * 微信支付回调
      */
@@ -101,6 +103,21 @@ public class PaymentController {
         } catch (Exception e) {
             log.error("处理微信支付回调失败", e);
             return "FAIL";
+        }
+    }
+
+    /**
+     * 支付宝支付回调
+     */
+    @PostMapping("/alipay/callback")
+    public String alipayCallback(@RequestParam Map<String, Object> callbackData) {
+        log.info("收到支付宝支付回调: {}", callbackData);
+        try {
+            alipayService.handlePaymentCallback(callbackData);
+            return "success";
+        } catch (Exception e) {
+            log.error("处理支付宝支付回调失败", e);
+            return "fail";
         }
     }
 }

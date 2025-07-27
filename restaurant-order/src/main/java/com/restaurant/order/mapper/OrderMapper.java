@@ -40,4 +40,9 @@ public interface OrderMapper extends BaseMapper<Order> {
     Long countOrdersByStatus(@Param("status") String status, 
                             @Param("startTime") LocalDateTime startTime,
                             @Param("endTime") LocalDateTime endTime);
+    
+    /**
+     * 查询超时未支付的订单
+     */
+    List<Order> selectTimeoutUnpaidOrders(@Param("timeoutTime") LocalDateTime timeoutTime);
 }

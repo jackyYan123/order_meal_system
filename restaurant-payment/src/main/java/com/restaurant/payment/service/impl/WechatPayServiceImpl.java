@@ -1,9 +1,7 @@
 package com.restaurant.payment.service.impl;
 
 import com.restaurant.payment.entity.Payment;
-import com.restaurant.payment.service.PaymentService;
 import com.restaurant.payment.service.WechatPayService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +13,8 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class WechatPayServiceImpl implements WechatPayService {
-    
-    private final PaymentService paymentService;
+
     
     @Override
     public Map<String, Object> createPayment(Payment payment) {
@@ -107,16 +103,24 @@ public class WechatPayServiceImpl implements WechatPayService {
     public void handlePaymentCallback(Map<String, Object> callbackData) {
         log.info("处理微信支付回调: {}", callbackData);
         
-        // TODO: 验证回调签名和处理回调数据
+        // TODO: 验证回调数据签名
+        // TODO: 更新支付状态
+        // 应该通过事件或消息队列通知PaymentService更新支付状态，避免直接依赖
+        
+        // 示例代码：
+        /*
         String paymentNo = (String) callbackData.get("out_trade_no");
         String transactionId = (String) callbackData.get("transaction_id");
-        String resultCode = (String) callbackData.get("result_code");
+        String tradeStatus = (String) callbackData.get("result_code");
         
-        if ("SUCCESS".equals(resultCode)) {
-            paymentService.handlePaymentSuccess(paymentNo, transactionId);
+        if ("SUCCESS".equals(tradeStatus)) {
+            // 触发支付成功事件
+            eventPublisher.publishEvent(new PaymentSuccessEvent(paymentNo, transactionId));
         } else {
-            String errorMsg = (String) callbackData.get("err_code_des");
-            paymentService.handlePaymentFailure(paymentNo, errorMsg);
+            String errorMessage = (String) callbackData.get("err_code_des");
+            // 触发支付失败事件
+            eventPublisher.publishEvent(new PaymentFailureEvent(paymentNo, errorMessage));
         }
+        */
     }
 }

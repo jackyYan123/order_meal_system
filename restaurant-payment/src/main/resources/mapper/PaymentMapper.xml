@@ -5,7 +5,7 @@
     <!-- 根据订单ID查询支付记录 -->
     <select id="selectByOrderId" resultType="com.restaurant.payment.entity.Payment">
         SELECT * FROM payments 
-        WHERE order_id = #{orderId} 
+        WHERE order_no= #{orderNo}
         AND deleted = 0
         ORDER BY created_at DESC
     </select>

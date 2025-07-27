@@ -125,6 +125,20 @@
   word-break: break-all;
 }
 
+/* 状态相关样式 */
+.info-value.status-text {
+  font-weight: bold;
+}
+
+.info-value.payment-status {
+  font-weight: bold;
+}
+
+.info-value.estimated-time {
+  font-weight: 500;
+  color: #007aff;
+}
+
 /* 商品列表 */
 .item-list {
   margin-top: 20rpx;
@@ -237,6 +251,7 @@
 /* 操作按钮 */
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 20rpx;
   margin-top: 40rpx;
   padding: 0 20rpx;
@@ -244,11 +259,13 @@
 
 .action-btn {
   flex: 1;
+  min-width: 200rpx;
   padding: 24rpx;
   border-radius: 50rpx;
   font-size: 28rpx;
   font-weight: bold;
   border: none;
+  text-align: center;
 }
 
 .action-btn.primary {
@@ -260,6 +277,11 @@
   background-color: white;
   color: #ff6b35;
   border: 2rpx solid #ff6b35;
+}
+
+.action-btn.danger {
+  background-color: #ff3b30;
+  color: white;
 }
 
 /* 订单不存在 */

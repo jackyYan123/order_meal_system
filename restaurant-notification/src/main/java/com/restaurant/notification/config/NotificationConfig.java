@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class NotificationConfig {
     
-    @Bean
+   /* @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
-    }
+    }*/
 }

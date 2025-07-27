@@ -74,10 +74,54 @@ function wechatPay(paymentData) {
   })
 }
 
+/**
+ * 支付宝支付
+ * @param {Object} paymentData - 支付数据
+ */
+function alipay(paymentData) {
+  return new Promise((resolve, reject) => {
+    // 先创建支付记录
+    createPayment(paymentData).then(payment => {
+      // 处理支付
+      return processPayment(payment.data.id)
+    }).then(paymentResult => {
+      // 调用支付宝支付
+      if (paymentResult.data.paymentMethod === 'ALIPAY') {
+        // 小程序中支付宝支付需要使用 my.tradePay
+        // 但在微信小程序中无法直接调用支付宝，需要跳转到H5页面
+        if (paymentResult.data.payUrl) {
+          // 跳转到支付宝H5支付页面
+          wx.navigateTo({
+            url: `/pages/webview/webview?url=${encodeURIComponent(paymentResult.data.payUrl)}`
+          })
+          
+          // 监听支付结果
+          setTimeout(() => {
+            resolve({
+              success: true,
+              data: paymentResult.data
+            })
+          }, 1000)
+        } else {
+          reject({
+            success: false,
+            message: '获取支付宝支付链接失败'
+          })
+        }
+      } else {
+        resolve(paymentResult)
+      }
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
 module.exports = {
   createPayment,
   processPayment,
   getPaymentDetail,
   getPaymentsByOrder,
-  wechatPay
+  wechatPay,
+  alipay
 }

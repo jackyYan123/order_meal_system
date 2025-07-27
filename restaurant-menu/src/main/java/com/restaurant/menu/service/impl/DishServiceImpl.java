@@ -14,6 +14,7 @@ import com.restaurant.menu.mapper.CategoryMapper;
 import com.restaurant.menu.mapper.DishMapper;
 import com.restaurant.menu.service.DishCacheService;
 import com.restaurant.menu.service.DishService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 /**
  * 菜品服务实现
  */
+@Slf4j
 @Service
 public class DishServiceImpl implements DishService {
 
@@ -458,20 +460,32 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public void reduceStock(Long dishId, Integer quantity) {
+        log.info("减少菜品库存，菜品ID: {}, 减少数量: {}", dishId, quantity);
+        
         Dish dish = dishMapper.selectById(dishId);
         if (dish == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "菜品不存在");
         }
 
+        if (quantity <= 0) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "减少库存数量必须大于0");
+        }
+
         if (dish.getStock() < quantity) {
-            throw new BusinessException(ErrorCode.BUSINESS_ERROR, "库存不足");
+            log.warn("菜品库存不足，菜品ID: {}, 当前库存: {}, 需要数量: {}", 
+                    dishId, dish.getStock(), quantity);
+            throw new BusinessException(ErrorCode.BUSINESS_ERROR, 
+                    String.format("库存不足，当前库存: %d，需要数量: %d", dish.getStock(), quantity));
         }
 
         LambdaUpdateWrapper<Dish> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Dish::getId, dishId)
                     .setSql("stock = stock - " + quantity);
         
-        dishMapper.update(null, updateWrapper);
+        int updateCount = dishMapper.update(null, updateWrapper);
+        if (updateCount == 0) {
+            throw new BusinessException(ErrorCode.BUSINESS_ERROR, "库存更新失败");
+        }
         
         // 更新菜品信息
         dish.setStock(dish.getStock() - quantity);
@@ -480,6 +494,9 @@ public class DishServiceImpl implements DishService {
         dishCacheService.updateDishCache(dish);
         // 清除分类缓存
         dishCacheService.clearCategoryDishCache(dish.getCategoryId());
+        
+        log.info("菜品库存减少成功，菜品ID: {}, 减少数量: {}, 剩余库存: {}", 
+                dishId, quantity, dish.getStock());
     }
 
     @Override
@@ -490,11 +507,18 @@ public class DishServiceImpl implements DishService {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "菜品不存在");
         }
 
+        if (quantity <= 0) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "增加库存数量必须大于0");
+        }
+
         LambdaUpdateWrapper<Dish> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Dish::getId, dishId)
                     .setSql("stock = stock + " + quantity);
         
-        dishMapper.update(null, updateWrapper);
+        int updateCount = dishMapper.update(null, updateWrapper);
+        if (updateCount == 0) {
+            throw new BusinessException(ErrorCode.BUSINESS_ERROR, "库存更新失败");
+        }
         
         // 更新菜品信息
         dish.setStock(dish.getStock() + quantity);
@@ -503,6 +527,21 @@ public class DishServiceImpl implements DishService {
         dishCacheService.updateDishCache(dish);
         // 清除分类缓存
         dishCacheService.clearCategoryDishCache(dish.getCategoryId());
+        
+        log.info("菜品库存增加成功，菜品ID: {}, 增加数量: {}, 当前库存: {}", 
+                dishId, quantity, dish.getStock());
+    }
+
+    @Override
+    @Transactional
+    public void restoreStock(Long dishId, Integer quantity) {
+        log.info("恢复菜品库存，菜品ID: {}, 恢复数量: {}", dishId, quantity);
+        
+        // restoreStock方法与increaseStock功能相同，都是增加库存
+        // 这里直接调用increaseStock方法
+        increaseStock(dishId, quantity);
+        
+        log.info("菜品库存恢复完成，菜品ID: {}, 恢复数量: {}", dishId, quantity);
     }
 
     /**

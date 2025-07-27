@@ -42,9 +42,9 @@ public interface PaymentService {
     PaymentDto getPaymentByPaymentNo(String paymentNo);
     
     /**
-     * 根据订单ID查询支付记录
+     * 根据订单号查询支付记录
      */
-    List<PaymentDto> getPaymentsByOrderId(Long orderId);
+    List<PaymentDto> getPaymentsByOrderId(String orderNo);
     
     /**
      * 申请退款

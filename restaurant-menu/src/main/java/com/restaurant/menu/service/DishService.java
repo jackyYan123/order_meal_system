@@ -97,6 +97,11 @@ public interface DishService {
      * 增加库存（取消订单时调用）
      */
     void increaseStock(Long dishId, Integer quantity);
+    
+    /**
+     * 恢复库存（取消订单时调用，与increaseStock功能相同）
+     */
+    void restoreStock(Long dishId, Integer quantity);
 
     /**
      * 获取推荐菜品

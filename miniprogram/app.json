@@ -7,6 +7,7 @@
     "pages/order-detail/order-detail",
     "pages/payment/payment",
     "pages/payment-result/payment-result",
+    "pages/webview/webview",
     "pages/login/login",
     "pages/profile/profile"
   ],

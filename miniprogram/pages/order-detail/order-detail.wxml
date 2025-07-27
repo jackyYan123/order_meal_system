@@ -10,10 +10,10 @@
     <view class="status-card">
       <view class="status-icon">✅</view>
       <view class="status-info">
-        <view class="status-text" style="color: {{getStatusColor(orderInfo.status)}}">
-          {{getStatusText(orderInfo.status)}}
+        <view class="status-text" style="color: {{orderInfo.statusColor}}">
+          {{orderInfo.statusText}}
         </view>
-        <view class="status-tip">订单已提交成功</view>
+        <view class="status-tip">{{orderInfo.statusText === '待确认' ? '订单已提交成功' : '订单处理中'}}</view>
       </view>
     </view>
     <!-- 订单信息 -->
@@ -28,8 +28,32 @@
         <text class="info-value">{{orderInfo.tableName}}</text>
       </view>
       <view class="info-row">
+        <text class="info-label">订单状态：</text>
+        <text class="info-value status-text" style="color: {{orderInfo.statusColor}}">
+          {{orderInfo.statusText}}
+        </text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">支付状态：</text>
+        <text class="info-value payment-status" style="color: {{orderInfo.paymentStatusColor}}">
+          {{orderInfo.paymentStatusText}}
+        </text>
+      </view>
+      <view class="info-row">
         <text class="info-label">下单时间：</text>
-        <text class="info-value">{{orderInfo.formattedCreatedAt}}</text>
+        <text class="info-value">{{orderInfo.createdAt || '--'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{orderInfo.paymentTime}}">
+        <text class="info-label">支付时间：</text>
+        <text class="info-value">{{orderInfo.paymentTime}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">预计完成：</text>
+        <text class="info-value estimated-time">{{orderInfo.estimatedTime || '--'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{orderInfo.completedTime}}">
+        <text class="info-label">完成时间：</text>
+        <text class="info-value">{{orderInfo.completedTime}}</text>
       </view>
       <view class="info-row" wx:if="{{orderInfo.remarks}}">
         <text class="info-label">备注：</text>
@@ -63,7 +87,35 @@
     </view>
     <!-- 操作按钮 -->
     <view class="action-buttons">
+      <!-- 支付按钮 -->
+      <button class="action-btn primary" 
+              wx:if="{{canPay()}}" 
+              bindtap="goToPayment">
+        立即支付
+      </button>
+      
+      <!-- 临时支付按钮（用于调试） -->
+      <button class="action-btn primary" 
+              wx:if="{{orderInfo && orderInfo.paymentStatus === 'UNPAID'}}" 
+              bindtap="goToPayment"
+              style="background-color: #ff3b30;">
+        🔥 立即支付 (调试)
+      </button>
+      
+      <!-- 取消订单按钮 -->
+      <button class="action-btn danger" 
+              wx:if="{{canCancel()}}" 
+              bindtap="cancelOrder">
+        取消订单
+      </button>
+      
+      <!-- 刷新按钮 -->
+      <button class="action-btn secondary" bindtap="refreshOrder">刷新状态</button>
+      
+      <!-- 继续点餐按钮 -->
       <button class="action-btn secondary" bindtap="goMenu">继续点餐</button>
+      
+      <!-- 返回首页按钮 -->
       <button class="action-btn primary" bindtap="goHome">返回首页</button>
     </view>
   </view>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单控制器
@@ -158,5 +159,27 @@ public class OrderController {
 
         Long count = orderService.countOrdersByStatus(status, startTime, endTime);
         return Result.success(count);
+    }
+
+    /**
+     * 更新订单支付状态
+     */
+    @PutMapping("/{orderId}/payment-status")
+    public Result<Void> updatePaymentStatus(@PathVariable Long orderId, @RequestBody Map<String, Object> request) {
+        log.info("更新订单支付状态，订单ID: {}, 请求: {}", orderId, request);
+        Boolean isPaid = (Boolean) request.get("isPaid");
+        Long paymentTime = (Long) request.get("paymentTime");
+        orderService.updatePaymentStatus(orderId, isPaid, paymentTime);
+        return Result.success();
+    }
+
+    /**
+     * 处理订单支付超时
+     */
+    @PutMapping("/{orderId}/payment-timeout")
+    public Result<Void> handlePaymentTimeout(@PathVariable Long orderId) {
+        log.info("处理订单支付超时，订单ID: {}", orderId);
+        orderService.handlePaymentTimeout(orderId);
+        return Result.success();
     }
 }

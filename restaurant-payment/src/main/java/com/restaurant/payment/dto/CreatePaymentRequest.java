@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 public class CreatePaymentRequest {
     
     /**
-     * 订单ID
+     * 订单号
      */
-    @NotNull(message = "订单ID不能为空")
-    private Long orderId;
+    @NotBlank(message = "订单号不能为空")
+    private String orderNo;
     
     /**
      * 支付金额
@@ -35,5 +35,5 @@ public class CreatePaymentRequest {
     /**
      * 备注
      */
-    private String remarks;
+    private String description;
 }

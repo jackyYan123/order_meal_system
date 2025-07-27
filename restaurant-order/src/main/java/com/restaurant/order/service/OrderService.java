@@ -79,4 +79,19 @@ public interface OrderService {
      * 统计订单数据
      */
     Long countOrdersByStatus(String status, LocalDateTime startTime, LocalDateTime endTime);
+    
+    /**
+     * 更新订单支付状态
+     */
+    void updatePaymentStatus(Long orderId, Boolean isPaid, Long paymentTime);
+    
+    /**
+     * 处理订单支付超时
+     */
+    void handlePaymentTimeout(Long orderId);
+    
+    /**
+     * 处理所有超时订单
+     */
+    void handleTimeoutOrders();
 }

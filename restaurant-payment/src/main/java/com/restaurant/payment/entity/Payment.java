@@ -1,7 +1,6 @@
 package com.restaurant.payment.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.restaurant.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,23 +12,22 @@ import java.time.LocalDateTime;
  * 支付记录实体类
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("payments")
-public class Payment extends BaseEntity {
+public class Payment {
     
     @TableId
-    private Long id;
-    
-    /**
-     * 支付流水号
-     */
-    private String paymentNo;
-    
+    private String id;
+
     /**
      * 订单ID
      */
     private Long orderId;
-    
+
+    /**
+     * 支付流水号
+     */
+    private String paymentNo;
+
     /**
      * 订单号
      */
@@ -49,34 +47,51 @@ public class Payment extends BaseEntity {
      * 支付状态：PENDING-待支付, SUCCESS-支付成功, FAILED-支付失败, REFUNDED-已退款
      */
     private String status;
+
+    /**
+     * 交易ID
+     */
+    private String transactionId;
     
     /**
      * 第三方支付平台交易号
      */
+    @TableField(exist = false)
     private String thirdPartyTransactionId;
     
     /**
      * 支付完成时间
      */
-    private LocalDateTime paidTime;
+    private LocalDateTime paidAt;
     
     /**
      * 退款时间
      */
+    @TableField(exist = false)
     private LocalDateTime refundTime;
     
     /**
      * 退款金额
      */
+    @TableField(exist = false)
     private BigDecimal refundAmount;
     
     /**
      * 失败原因
      */
+    @TableField(exist = false)
     private String failureReason;
-    
+
     /**
-     * 备注
+     * 创建时间
      */
-    private String remarks;
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
 }

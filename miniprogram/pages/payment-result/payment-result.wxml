@@ -37,7 +37,7 @@
       </view>
       <view class="info-item" wx:if="{{status === 'success'}}">
         <text class="label">支付时间</text>
-        <text class="value">{{formatTime(order.paymentTime || order.updateTime)}}</text>
+        <text class="value">{{order.paymentTime || order.updatedAt || '--'}}</text>
       </view>
       <view class="info-item" wx:if="{{order.paymentMethod}}">
         <text class="label">支付方式</text>

@@ -15,7 +15,7 @@
       <view class="order-header">
         <view class="order-info">
           <text class="order-no">订单号：{{item.orderNo}}</text>
-          <text class="order-time">{{item.formattedCreatedAt}}</text>
+          <text class="order-time">{{item.createdAt || '--'}}</text>
         </view>
         <view class="order-status {{getStatusClass(item.status)}}">
           {{getStatusText(item.status)}}

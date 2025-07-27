@@ -17,7 +17,7 @@ public interface PaymentMapper extends BaseMapper<Payment> {
     /**
      * 根据订单ID查询支付记录
      */
-    List<Payment> selectByOrderId(@Param("orderId") Long orderId);
+    List<Payment> selectByOrderId(@Param("orderNo") String orderNo);
     
     /**
      * 根据支付流水号查询支付记录

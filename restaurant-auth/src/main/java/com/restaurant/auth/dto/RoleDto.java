@@ -1,5 +1,7 @@
 package com.restaurant.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +16,11 @@ public class RoleDto {
     private String description;
     private Boolean isEnabled;
     private Integer sortOrder;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private LocalDateTime updatedAt;
     
     /**
