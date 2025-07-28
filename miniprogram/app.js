@@ -3,7 +3,7 @@ App({
   globalData: {
     userInfo: null,
     token: null,
-    baseUrl: 'http://192.168.0.104:8080',
+    baseUrl: 'http://10.23.146.62:8080',
     tableId: null,
     tableName: null,
     cart: [],

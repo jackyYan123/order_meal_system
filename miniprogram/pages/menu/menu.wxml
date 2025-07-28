@@ -41,11 +41,11 @@
           </view>
           <!-- 购物车操作 -->
           <view class="cart-controls" wx:if="{{item.stock > 0}}">
-            <button class="cart-btn minus-btn" wx:if="{{item.cartQuantity > 0}}" data-dish="{{item}}" bindtap="removeFromCart">
+            <button class="cart-btn minus-btn {{item.cartQuantity > 0 ? 'visible' : 'hidden'}}" data-dish="{{item}}" bindtap="removeFromCart">
               -
             </button>
-            <text class="quantity" wx:if="{{item.cartQuantity > 0}}">
-              {{item.cartQuantity}}
+            <text class="quantity {{item.cartQuantity > 0 ? 'visible' : 'hidden'}}">
+              {{item.cartQuantity || 0}}
             </text>
             <button class="cart-btn plus-btn" data-dish="{{item}}" bindtap="addToCart">+</button>
           </view>

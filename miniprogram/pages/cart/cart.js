@@ -19,6 +19,7 @@ Page({
   },
 
   onLoad() {
+    console.log('购物车页面加载')
     this.loadCartData()
     this.loadTableInfo()
   },
@@ -40,6 +41,11 @@ Page({
     const totalPrice = calculateCartTotal(cart)
     const totalCount = calculateCartCount(cart)
 
+    console.log('购物车数据:', cart)
+    console.log('购物车商品数量:', cart.length)
+    console.log('总价:', totalPrice)
+    console.log('总数量:', totalCount)
+
     // 格式化购物车商品的价格
     const formattedCartItems = cart.map(item => ({
       ...item,
@@ -53,6 +59,8 @@ Page({
       totalCount,
       formattedTotalPrice: formatCurrency(totalPrice)
     })
+
+    console.log('页面数据更新后 - cartItems.length:', this.data.cartItems.length)
   },
 
   // 加载桌台信息
@@ -226,22 +234,42 @@ Page({
 
   // 选择桌台
   selectTable() {
-    wx.showToast({
-      title: '请返回首页扫码选择桌台',
-      icon: 'none'
+    wx.showModal({
+      title: '更换桌台',
+      content: '更换桌台将清空当前购物车，请返回首页扫码选择新桌台',
+      confirmText: '去首页',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          wx.switchTab({
+            url: '/pages/index/index'
+          })
+        }
+      }
     })
   },
 
+
+
   // 提交订单
   async submitOrder() {
+    console.log('=== 开始提交订单 ===')
     console.log('点击提交订单按钮')
     console.log('购物车商品数量:', this.data.cartItems.length)
     console.log('桌台信息:', this.data.tableInfo)
     console.log('登录状态:', !!app.globalData.token)
     console.log('用户信息:', app.globalData.userInfo)
+    console.log('submitting状态:', this.data.submitting)
+    
+    // 防止重复提交
+    if (this.data.submitting) {
+      console.log('正在提交中，忽略重复点击')
+      return
+    }
     
     // 验证购物车
     if (this.data.cartItems.length === 0) {
+      console.log('购物车为空')
       wx.showToast({
         title: '购物车为空',
         icon: 'none'
@@ -251,6 +279,7 @@ Page({
 
     // 验证桌台
     if (!this.data.tableInfo.id) {
+      console.log('没有桌台信息')
       wx.showToast({
         title: '请先选择桌台',
         icon: 'none'
@@ -275,13 +304,14 @@ Page({
     }
 
     try {
+      console.log('开始设置submitting状态')
       this.setData({ submitting: true })
 
       // 构建订单数据
       const orderData = {
         tableId: this.data.tableInfo.id,
-        customerId: app.globalData.userInfo?.id,
-        remarks: this.data.remarks,
+        customerId: app.globalData.userInfo?.id || 1,
+        remarks: this.data.remarks || '',
         items: this.data.cartItems.map(item => ({
           dishId: item.dishId,
           quantity: item.quantity,
@@ -289,10 +319,17 @@ Page({
         }))
       }
 
+      console.log('订单数据:', orderData)
+      console.log('开始调用createOrder API')
+
       // 创建订单
       const res = await createOrder(orderData)
+      
+      console.log('createOrder API响应:', res)
 
-      if (res.success) {
+      if (res && res.success) {
+        console.log('订单创建成功:', res.data)
+        
         // 清空购物车
         this.updateCart([])
 
@@ -310,17 +347,33 @@ Page({
             url: `/pages/order-detail/order-detail?orderNo=${res.data.orderNo}&showPayment=true`
           })
         }, 1500)
+      } else {
+        console.log('订单创建失败:', res)
+        throw new Error(res?.message || '订单创建失败')
       }
 
     } catch (error) {
       console.error('提交订单失败：', error)
+      
+      // 显示具体的错误信息
+      let errorMessage = '提交失败'
+      if (error.message) {
+        errorMessage = error.message
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      }
+      
       wx.showToast({
-        title: error.message || '提交失败',
-        icon: 'none'
+        title: errorMessage,
+        icon: 'none',
+        duration: 3000
       })
     } finally {
+      console.log('重置submitting状态')
       this.setData({ submitting: false })
     }
+    
+    console.log('=== 提交订单流程结束 ===')
   },
 
   // 继续购物

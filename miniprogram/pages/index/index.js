@@ -121,21 +121,24 @@ Page({
           // 解析二维码内容
           const qrData = JSON.parse(res.result)
           if (qrData.tableId) {
-            app.globalData.tableId = qrData.tableId
-            app.globalData.tableName = qrData.tableName || `桌台${qrData.tableId}`
+            // 检查是否更换了桌台
+            const currentTableId = app.globalData.tableId
+            const newTableId = qrData.tableId
             
-            wx.setStorageSync('tableId', qrData.tableId)
-            wx.setStorageSync('tableName', qrData.tableName)
-
-            this.setData({
-              'tableInfo.id': qrData.tableId,
-              'tableInfo.name': qrData.tableName || `桌台${qrData.tableId}`
-            })
-
-            wx.showToast({
-              title: '桌台选择成功',
-              icon: 'success'
-            })
+            // 如果更换了桌台，提示用户是否清空购物车
+            if (currentTableId && currentTableId !== newTableId && app.globalData.cart && app.globalData.cart.length > 0) {
+              wx.showModal({
+                title: '更换桌台',
+                content: '更换桌台将清空当前购物车，是否继续？',
+                success: (modalRes) => {
+                  if (modalRes.confirm) {
+                    this.changeTable(qrData)
+                  }
+                }
+              })
+            } else {
+              this.changeTable(qrData)
+            }
           } else {
             wx.showToast({
               title: '无效的桌台二维码',
@@ -155,6 +158,33 @@ Page({
           icon: 'none'
         })
       }
+    })
+  },
+
+  // 更换桌台
+  changeTable(qrData) {
+    // 清空购物车
+    app.globalData.cart = []
+    wx.setStorageSync('cart', [])
+    
+    // 更新桌台信息
+    app.globalData.tableId = qrData.tableId
+    app.globalData.tableName = qrData.tableName || `桌台${qrData.tableId}`
+    
+    wx.setStorageSync('tableId', qrData.tableId)
+    wx.setStorageSync('tableName', qrData.tableName)
+
+    this.setData({
+      'tableInfo.id': qrData.tableId,
+      'tableInfo.name': qrData.tableName || `桌台${qrData.tableId}`
+    })
+
+    // 更新购物车数量显示
+    this.updateCartCount()
+
+    wx.showToast({
+      title: '桌台选择成功',
+      icon: 'success'
     })
   },
 

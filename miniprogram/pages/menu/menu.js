@@ -13,8 +13,7 @@ Page({
     cartCount: 0,
     showSearch: false,
     page: 1,
-    hasMore: true,
-    addToCartTimer: null
+    hasMore: true
   },
 
   onLoad(options) {
@@ -44,6 +43,18 @@ Page({
       app.globalData.selectedCategoryId = undefined
       // 重新加载菜品数据
       this.loadDishes(true)
+    }
+  },
+
+  onUnload() {
+    // 清理定时器，防止内存泄漏
+    if (this.addToCartTimer) {
+      clearTimeout(this.addToCartTimer)
+      this.addToCartTimer = null
+    }
+    if (this.removeFromCartTimer) {
+      clearTimeout(this.removeFromCartTimer)
+      this.removeFromCartTimer = null
     }
   },
 
@@ -239,21 +250,19 @@ Page({
       return
     }
 
-    // 防抖处理
-    if (this.data.addToCartTimer) {
-      clearTimeout(this.data.addToCartTimer)
+    // 防抖处理，避免频繁点击导致多次渲染
+    if (this.addToCartTimer) {
+      clearTimeout(this.addToCartTimer)
     }
     
-    this.setData({
-      addToCartTimer: setTimeout(() => {
-        this.performAddToCart(dish)
-      }, 100)
-    })
+    this.addToCartTimer = setTimeout(() => {
+      this.performAddToCart(dish)
+    }, 50) // 减少延迟时间，提高响应性
   },
 
   // 执行添加到购物车操作
   performAddToCart(dish) {
-    // 批量更新数据，减少setData调用
+    // 批量更新数据，减少setData调用次数
     const updates = {}
     
     // 更新购物车数据
@@ -275,41 +284,55 @@ Page({
       })
     }
     
-    // 更新特定菜品的数量显示，避免更新整个数组
+    // 找到菜品索引并准备更新数据
     const dishIndex = this.data.dishes.findIndex(d => d.id === dish.id)
     if (dishIndex !== -1) {
+      // 批量准备更新数据
       updates[`dishes[${dishIndex}].cartQuantity`] = newQuantity
+      updates.cartCount = calculateCartCount(cart)
+      
+      // 一次性更新所有数据，减少渲染次数
+      this.setData(updates)
     }
     
-    // 更新购物车总数
-    updates.cartCount = calculateCartCount(cart)
-    
-    // 一次性更新所有数据
-    this.setData(updates)
-    
-    // 更新全局数据
+    // 更新全局数据和本地存储
     app.globalData.cart = cart
     wx.setStorageSync('cart', cart)
 
-    // 显示成功提示
+    // 显示成功提示（减少duration避免过多提示）
     wx.showToast({
-      title: '已添加到购物车',
+      title: '已添加',
       icon: 'success',
-      duration: 1000
+      duration: 600
     })
 
-    // 触觉反馈
-    wx.vibrateShort()
+    // 轻微触觉反馈
+    wx.vibrateShort({
+      type: 'light'
+    })
   },
 
   // 减少购物车商品
   removeFromCart(e) {
     const dish = e.currentTarget.dataset.dish
+    
+    // 防抖处理，避免频繁点击
+    if (this.removeFromCartTimer) {
+      clearTimeout(this.removeFromCartTimer)
+    }
+    
+    this.removeFromCartTimer = setTimeout(() => {
+      this.performRemoveFromCart(dish)
+    }, 50)
+  },
+
+  // 执行从购物车移除操作
+  performRemoveFromCart(dish) {
     const cart = app.globalData.cart || []
     const existingItem = cart.find(item => item.dishId === dish.id)
 
     if (existingItem) {
-      // 批量更新数据，减少setData调用
+      // 批量更新数据，减少setData调用次数
       const updates = {}
       let newQuantity = 0
 
@@ -322,23 +345,25 @@ Page({
         newQuantity = 0
       }
 
-      // 更新特定菜品的数量显示，避免更新整个数组
+      // 找到菜品索引并准备更新数据
       const dishIndex = this.data.dishes.findIndex(d => d.id === dish.id)
       if (dishIndex !== -1) {
+        // 批量准备更新数据
         updates[`dishes[${dishIndex}].cartQuantity`] = newQuantity
+        updates.cartCount = calculateCartCount(cart)
+        
+        // 一次性更新所有数据，减少渲染次数
+        this.setData(updates)
       }
 
-      // 更新购物车总数
-      updates.cartCount = calculateCartCount(cart)
-
-      // 一次性更新所有数据
-      this.setData(updates)
-
-      // 更新全局数据
+      // 更新全局数据和本地存储
       app.globalData.cart = cart
       wx.setStorageSync('cart', cart)
 
-      wx.vibrateShort()
+      // 轻微触觉反馈
+      wx.vibrateShort({
+        type: 'light'
+      })
     }
   },
 
